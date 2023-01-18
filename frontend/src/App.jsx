@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
 export default function App() {
   const [file, setFile] = useState()
   const [description, setDescription] = useState("")
   const [images, setImages] = useState([])
-
   const submit = async event => {
     event.preventDefault()
     const formData = new FormData()
@@ -15,7 +13,6 @@ export default function App() {
     const newImage = result.data
     setImages([newImage, ...images])
   }
-
   useEffect(() => {
     async function getImages() {
       const result = await axios.get('/api/images')
@@ -23,10 +20,10 @@ export default function App() {
     }
     getImages()
   }, [])
-
   return (
     <div className="App">
       <form onSubmit={submit}>
+        <h1>Upload an image!</h1>
         <input
           filename={file}
           onChange={e => setFile(e.target.files[0])}
@@ -39,14 +36,13 @@ export default function App() {
         ></input>
         <button type="submit">Submit</button>
       </form>
-      {images.map((image) => {
-        return (
-          <div key={image.id}>
-            <img src={`/api?imagePath=${image.file_path}`} max-width="300px"/>
-            <p>{image.description}</p>
-          </div>
-        )
-      })}
+      {images.map(image =>
+        <div key={image.id}>
+          <img src={image.file_path} />
+          <p>Description: {image.description}</p>
+          <p>Date Created: {image.created.slice(0, 10)}</p>
+        </div>
+      )}
     </div>
   )
 }
